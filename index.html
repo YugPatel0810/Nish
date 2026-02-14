@@ -16,6 +16,18 @@
   <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
   </head>
 <body class="bg-black text-milk overflow-x-hidden">
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="Just The Two of Us_spotdown.org.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control Button -->
+    <button id="musicBtn" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-velvet/80 hover:bg-velvet text-milk flex items-center justify-center transition-all duration-300 hover:shadow-soft" title="Toggle Music">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3v9.28c-.47-.46-1.12-.75-1.84-.75-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </button>
+
     <!-- Floating Hearts Background -->
     <div class="floating-hearts-container fixed inset-0 pointer-events-none z-0" aria-hidden="true">
         <div class="floating-heart parallax-layer" data-speed="0.3" style="left: 10%; animation-delay: 0s;">❤</div>
@@ -1333,6 +1345,53 @@
             });
 
         </script>
+
+    <!-- Music Control Script -->
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        // Update button state
+        function updateButton() {
+            if (isPlaying) {
+                musicBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.46-1.12-.75-1.84-.75-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>';
+            } else {
+                musicBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+            }
+        }
+
+        // Toggle music on button click
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                isPlaying = false;
+            } else {
+                bgMusic.play().catch(() => {
+                    // Browser may block autoplay, user will need to interact
+                });
+                isPlaying = true;
+            }
+            updateButton();
+        });
+
+        // Attempt to autoplay on first user interaction
+        document.addEventListener('click', () => {
+            if (!isPlaying) {
+                bgMusic.play().catch(() => {
+                    // Browser may block autoplay
+                });
+                isPlaying = true;
+                updateButton();
+            }
+        }, { once: true });
+
+        // Update button when audio ends
+        bgMusic.addEventListener('ended', () => {
+            isPlaying = false;
+            updateButton();
+        });
+    </script>
 <script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
 </body>
 </html>
